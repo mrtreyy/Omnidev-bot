@@ -47,18 +47,18 @@ module.exports = async (ctx) => {
       break;
       
     case 'approve':
-      if (!args[1]) { await ctx.reply('Specify ID: /admin approve [id]'); return; }
+      if (!args[1]) { await ctx.reply('Specify ID: /admin approve [id]', { parse_mode: 'Markdown' }); return; }
       await ctx.reply(`✅ Approved #${args[1]}`, { parse_mode: 'Markdown' });
       break;
       
     case 'reject':
-      if (!args[1]) { await ctx.reply('Specify ID: /admin reject [id]'); return; }
+      if (!args[1]) { await ctx.reply('Specify ID: /admin reject [id]', { parse_mode: 'Markdown' }); return; }
       await ctx.reply(`❌ Rejected #${args[1]}`, { parse_mode: 'Markdown' });
       break;
       
     case 'broadcast':
       const msg2 = args.slice(1).join(' ');
-      if (!msg2) { await ctx.reply('Specify message: /admin broadcast [msg]'); return; }
+      if (!msg2) { await ctx.reply('Specify message: /admin broadcast [msg]', { parse_mode: 'Markdown' }); return; }
       const users = await redis.keys('user:*');
       let sent = 0;
       for (const key of users) {
@@ -67,16 +67,17 @@ module.exports = async (ctx) => {
           sent++;
         } catch (e) {}
       }
-      await ctx.reply(`📢 Broadcast sent to ${sent} users.`);
+      await ctx.reply(`📢 Broadcast sent to ${sent} users.`, { parse_mode: 'Markdown' });
       break;
       
     case 'ban':
-      if (!args[1]) { await ctx.reply('Specify ID: /admin ban [id]'); return; }
+      if (!args[1]) { await ctx.reply('Specify ID: /admin ban [id]', { parse_mode: 'Markdown' }); return; }
       await redis.sadd('banned_users', args[1]);
-      await ctx.reply(`🔨 Banned ${args[1]}`);
+      await ctx.reply(`🔨 Banned ${args[1]}`, { parse_mode: 'Markdown' });
       break;
       
     case 'unban':
-      if (!args[1]) { await ctx.reply('Specify ID: /admin unban [id]'); return; }
+      if (!args[1]) { await ctx.reply('Specify ID: /admin unban [id]', { parse_mode: 'Markdown' }); return; }
       await redis.srem('banned_users', args[1]);
-      await ctx.reply(`🔓 Unbanned ${args[1]}`
+      await ctx.reply(`🔓 Unbanned ${args[1]}`, { parse_mode: 'Markdown' });
+}
