@@ -1,4 +1,3 @@
-cat > handlers/admin.js << 'EOF'
 const { isAdmin, redis } = require('../services/redis');
 const { adminPanelKeyboard } = require('../keyboards/inline');
 
@@ -6,7 +5,7 @@ module.exports = async (ctx) => {
   const userId = ctx.from.id;
   
   if (!(await isAdmin(userId))) {
-    await ctx.reply('🛡️ *ACCESS DENIED*\n\nYou are not worthy.', { parse_mode: 'Markdown' });
+    await ctx.reply('🛡️ *ACCESS DENIED*', { parse_mode: 'Markdown' });
     return;
   }
   
@@ -31,11 +30,7 @@ module.exports = async (ctx) => {
     );
   } else if (subcommand === 'queue') {
     const queue = await redis.lrange('pending_approvals', 0, -1);
-    if (queue.length === 0) {
-      await ctx.reply('📋 Queue is empty.', { parse_mode: 'Markdown' });
-    } else {
-      await ctx.reply(`📋 Pending approvals: ${queue.length}`, { parse_mode: 'Markdown' });
-    }
+    await ctx.reply(`📋 Queue: ${queue.length} items`, { parse_mode: 'Markdown' });
   } else if (subcommand === 'ban') {
     if (!args[1]) {
       await ctx.reply('Specify ID: /admin ban [id]', { parse_mode: 'Markdown' });
@@ -59,11 +54,11 @@ module.exports = async (ctx) => {
       let sent = 0;
       for (const key of users) {
         try {
-          await ctx.api.sendMessage(key.split(':')[1], `📢 *BROADCAST*\n\n${msg}`, { parse_mode: 'Markdown' });
+          await ctx.api.sendMessage(key.split(':')[1], `📢 ${msg}`, { parse_mode: 'Markdown' });
           sent++;
         } catch (e) {}
       }
-      await ctx.reply(`📢 Broadcast sent to ${sent} users.`, { parse_mode: 'Markdown' });
+      await ctx.reply(`📢 Sent to ${sent} users`, { parse_mode: 'Markdown' });
     }
   } else {
     const panel = `
@@ -81,4 +76,3 @@ module.exports = async (ctx) => {
     await ctx.reply(panel, { parse_mode: 'Markdown', reply_markup: adminPanelKeyboard });
   }
 };
-EOF
