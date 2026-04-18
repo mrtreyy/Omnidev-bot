@@ -12,6 +12,7 @@ const termuxHandler = require('./handlers/termux');
 const historyHandler = require('./handlers/history');
 const settokenHandler = require('./handlers/settoken');
 const adminHandler = require('./handlers/admin');
+const callbackHandler = require('./handlers/callbacks');
 
 // Conversations
 const deployConversation = require('./conversations/deployConversation');
@@ -67,10 +68,13 @@ bot.command('history', historyHandler);
 bot.command('settoken', settokenHandler);
 bot.command('admin', adminHandler);
 
+// Callback query handler for inline buttons
+bot.on('callback_query:data', callbackHandler);
+
 // Help command
 bot.command('help', async (ctx) => {
   const name = ctx.from.first_name || 'Dev';
-  
+
   await ctx.reply(
     `◈ ◈ ◈ OMNIDEV HELP ◈ ◈ ◈\n\n` +
     `⚔️ *${name}*, the arsenal awaits.\n\n` +
@@ -92,7 +96,7 @@ bot.command('help', async (ctx) => {
 // Catch-all
 bot.on('message', async (ctx) => {
   const text = ctx.message.text;
-  
+
   if (text && (text.includes('github.com') || text.includes('github.com/'))) {
     await ctx.reply(
       `🔍 *GitHub link detected.*\n\n` +
@@ -101,7 +105,7 @@ bot.on('message', async (ctx) => {
     );
     return;
   }
-  
+
   await ctx.reply(
     `◈ ◈ ◈ OMNIDEV ◈ ◈ ◈\n\n` +
     `Type */help* to see commands.`,
